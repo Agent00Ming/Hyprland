@@ -663,18 +663,20 @@ void CPointerManager::warpAbsolute(Vector2D abs, SP<IHID> dev) {
 
     // in logical global
     CBox mappedArea = currentMonitor->logicalBox();
-
+    // TODO: add 'let driver decide' mapping hyprland#6023
     switch (dev->getType()) {
         case HID_TYPE_TABLET: {
             CTablet* TAB = reinterpret_cast<CTablet*>(dev.get());
             if (!TAB->boundOutput.empty()) {
+                Debug::log(WARN,"BOUNDOUTPUT IS NOT EMPTY");
                 if (const auto PMONITOR = g_pCompositor->getMonitorFromString(TAB->boundOutput); PMONITOR) {
+                    Debug::log(WARN,"BINDING TO MONITOR {}", TAB->boundOutput);
                     currentMonitor = PMONITOR->self.lock();
                     mappedArea     = currentMonitor->logicalBox();
                 }
             }
-
             if (!TAB->boundBox.empty())
+                Debug::log(WARN,"MAPPING TO REGION");
                 mappedArea = TAB->boundBox.translate(currentMonitor->vecPosition);
             break;
         }
